@@ -1,0 +1,71 @@
+PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX dbo:  <http://dbpedia.org/ontology/>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX m3lite:  <http://purl.org/iot/vocab/m3-lite#>
+PREFIX gn: <http://www.geonames.org/ontology#>
+
+CONSTRUCT {
+
+    ?URI_Country rdf:type dbo:Country;
+        dbo:name ?Country.
+
+    ?URI_City rdf:type dbo:City;
+        gn:locatedIn ?URI_Country;
+        dbo:name ?City.
+        
+    ?URI_NO2 rdf:type m3lite:Pollutant;
+        dbo:name ?data_pollutants_no2_description;
+        rdf:value ?Value_of_NO2; 
+        dbo:category ?Category_NO2;
+        dbo:city ?URI_City;
+        dbo:date ?_Date;
+	m3lite:dangerLvl ?Category_NO2.
+
+	void:title "Taux de Dioxyde d'azote dans l'air"
+
+    ?URI_CO rdf:type m3lite:Pollutant;
+        dbo:name ?data_pollutants_co_description;
+        rdf:value ?Value_of_CO; 
+        dbo:category ?Category_CO;
+        dbo:city ?URI_City;
+        dbo:date ?_Date;
+	m3lite:dangerLvl ?Category_CO.
+
+    ?URI_O3 rdf:type m3lite:Pollutant;
+        dbo:name ?data_pollutants_o3_description;
+        rdf:value ?Value_of_O3; 
+        dbo:category ?Category_O3;
+        dbo:city ?URI_City;
+        dbo:date ?_Date;
+	m3lite:dangerLvl ?Category_O3.
+
+    
+    ?URI_PM25 rdf:type m3lite:Pollutant;
+        dbo:name ?data_pollutants_pm25_description;
+        rdf:value ?Value_of_PM5; 
+        dbo:category ?Category_PM25;
+        dbo:city ?URI_City;
+        dbo:date ?_Date;
+	m3lite:dangerLvl ?Category_PM25.
+}
+
+WHERE {
+    BIND (URI(concat('http://purl.org/iot/vocab/m3-lite/', ?City, '_', ?Date)) AS ?URI_Pollutant)
+    
+    BIND (URI(concat('http://purl.org/iot/vocab/m3-lite/', ?City, '_', ?Date,'/no2')) AS ?URI_NO2)
+    BIND (URI(concat('http://purl.org/iot/vocab/m3-lite/', ?City, '_', ?Date,'/co')) AS ?URI_CO)
+    BIND (URI(concat('http://purl.org/iot/vocab/m3-lite/', ?City, '_', ?Date,'/o3')) AS ?URI_O3)
+    BIND (URI(concat('http://purl.org/iot/vocab/m3-lite/', ?City, '_', ?Date,'/pm25')) AS ?URI_PM25)
+    
+    BIND (URI(concat('http://dbpedia.org/ontology/', 'Country/', ?Country)) AS ?URI_Country)
+    BIND (URI(concat('http://dbpedia.org/ontology/', 'City/', ?City)) AS ?URI_City)
+	
+	BIND (xsd:decimal(?Value_NO2) AS ?Value_of_NO2)
+   	BIND (xsd:decimal(?Value_O3) AS ?Value_of_O3)
+   	BIND (xsd:decimal(?Value_CO) AS ?Value_of_CO)
+    	BIND (xsd:decimal(?Value_PM5) AS ?Value_of_PM5)
+    	BIND (xsd:dateTime(?Date) AS ?_Date)
+}
+
